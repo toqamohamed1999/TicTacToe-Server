@@ -1,0 +1,35 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Dec 24, 2022, 8:53:40 AM
+    Author     : Eman
+*/
+
+.root{
+   -fx-background-image: url('/res/BackGround.JPG'); 
+   -fx-background-size: cover;
+    
+}
+
+.button{
+    -fx-background-radius: 30,30,30,30
+}
+
+
+.default-color0.chart-pie { -fx-pie-color: #FEF400; }
+.default-color1.chart-pie { -fx-pie-color: #F9002D; }
+
+.chart-pie-label-line {
+    -fx-stroke: #FEF400;
+    -fx-fill: #F9002D;
+}
+
+.chart-pie-label { /*this is what you need for labels*/
+    -fx-fill: #FEF400;
+    -fx-font-size: 1em;
+} 
+
+
