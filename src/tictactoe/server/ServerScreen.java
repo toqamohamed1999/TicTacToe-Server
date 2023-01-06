@@ -13,20 +13,21 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
 
 public class ServerScreen extends AnchorPane {
+
     protected final Label label;
     protected final PieChart pieChart;
     protected final Button startStopButton;
-    
+
     public ServerScreen() {
-        
+
         label = new Label();
-        pieChart = new PieChart(getChartData()); 
-        startStopButton = new Button();     
+        pieChart = new PieChart(getChartData());
+        startStopButton = new Button();
 
         setId("AnchorPane");
         setPrefHeight(430.0);
         setPrefWidth(600.0);
-        
+
         label.setLayoutX(230.0);
         label.setLayoutY(32.0);
         label.setPrefHeight(49.0);
@@ -35,8 +36,7 @@ public class ServerScreen extends AnchorPane {
         label.setTextFill(javafx.scene.paint.Color.WHITE);
         label.setFont(new Font("Impact", 42.0));
         getStylesheets().add("/tictactoe/server/Styles.css");
-        
-        
+
         pieChart.setLayoutX(130.0);
         pieChart.setLayoutY(80.0);
         pieChart.setPrefHeight(230.0);
@@ -54,34 +54,32 @@ public class ServerScreen extends AnchorPane {
         startStopButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                
-            ServerHandler serverHandler = new ServerHandler();
-            System.out.println("############# server run");
-            /*if(startStopButton.getText()=="Start"){      
-                   startStopButton.setText("Stop"); 
+
+                //ServerHandler serverHandler = new ServerHandler();
+                if (startStopButton.getText() == "Start") {
+                    ServerHandler serverHandler = new ServerHandler();
+                    System.out.println("############# server run");
+                    startStopButton.setText("Stop");
+                } else if (startStopButton.getText() == "Stop") {
+                    startStopButton.setText("Start");
+                    ServerHandler serverHandler = new ServerHandler();
+                    System.out.println("############# server run again");
                 }
-           else if(startStopButton.getText()=="Stop"){
-               startStopButton.setText("Start");
-                } */
             }
         });
-        
 
-      
         getChildren().add(startStopButton);
         getChildren().add(pieChart);
         getChildren().add(label);
-        
-   
+
     }
-    
-    private ObservableList<Data> getChartData() {  
-        ObservableList<Data> list = FXCollections.observableArrayList();  
+
+    private ObservableList<Data> getChartData() {
+        ObservableList<Data> list = FXCollections.observableArrayList();
         list.addAll(new PieChart.Data("Online", 80),
-           new PieChart.Data("Offline", 20)); 
-        
-        return list;  
-    }  
- 
-    
+                new PieChart.Data("Offline", 20));
+
+        return list;
+    }
+
 }
