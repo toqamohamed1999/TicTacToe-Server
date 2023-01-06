@@ -55,12 +55,14 @@ public class ServerScreen extends AnchorPane {
             @Override
             public void handle(ActionEvent event) {
                 
-            if(startStopButton.getText()=="Start"){      
+            ServerHandler serverHandler = new ServerHandler();
+            System.out.println("############# server run");
+            /*if(startStopButton.getText()=="Start"){      
                    startStopButton.setText("Stop"); 
                 }
            else if(startStopButton.getText()=="Stop"){
                startStopButton.setText("Start");
-                } 
+                } */
             }
         });
         
