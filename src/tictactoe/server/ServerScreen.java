@@ -17,8 +17,6 @@ public class ServerScreen extends AnchorPane {
     protected final PieChart pieChart;
     protected final Button startStopButton;
     
-   
-
     public ServerScreen() {
         
         label = new Label();
