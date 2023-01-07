@@ -55,16 +55,12 @@ public class ServerScreen extends AnchorPane {
             @Override
             public void handle(ActionEvent event) {
 
-                //ServerHandler serverHandler = new ServerHandler();
-                if (startStopButton.getText() == "Start") {
-                    ServerHandler serverHandler = new ServerHandler();
-                    System.out.println("############# server run");
-                    startStopButton.setText("Stop");
-                } else if (startStopButton.getText() == "Stop") {
-                    startStopButton.setText("Start");
-                    ServerHandler serverHandler = new ServerHandler();
-                    System.out.println("############# server run again");
+                 if ((startStopButton.getText().equals("Start"))) {
+                    startServer();
+                } else{
+                    stopServer();
                 }
+            
             }
         });
 
@@ -80,6 +76,26 @@ public class ServerScreen extends AnchorPane {
                 new PieChart.Data("Offline", 20));
 
         return list;
+    }
+    
+        ServerHandler  serverHandler = null;
+    void startServer() {
+        System.out.println("############# server start");
+        startStopButton.setText("Stop");
+        serverHandler = new ServerHandler();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                serverHandler.startServer();
+            }
+        }).start();
+
+    }
+
+    void stopServer() {
+        System.out.println("############# server stop");
+        startStopButton.setText("Start");
+        serverHandler.stopServer();
     }
 
 }

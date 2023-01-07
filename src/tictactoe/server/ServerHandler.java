@@ -22,13 +22,25 @@ public class ServerHandler {
 
     ServerSocket serverSocket;
 
-    public ServerHandler() {
+    public ServerHandler() {   
+         
+    }
+    
+    void startServer() {
         try {
             serverSocket = new ServerSocket(5005);
             while (true) {
                 Socket socket = serverSocket.accept();
                 new Handler(socket);
             }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    void stopServer() {
+        try {
+           serverSocket.close();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -71,6 +83,8 @@ class Handler extends Thread {
 
         }
     }
+    
+     
 
     void sendMessageToAll(String msg) {
 
