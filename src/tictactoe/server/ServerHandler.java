@@ -24,10 +24,10 @@ public class ServerHandler {
 
     ServerSocket serverSocket;
 
-    public ServerHandler() {   
-         
+    public ServerHandler() {
+
     }
-    
+
     void startServer() {
         try {
             serverSocket = new ServerSocket(5005);
@@ -41,8 +41,8 @@ public class ServerHandler {
     }
 
     void stopServer() {
-        try { 
-           serverSocket.close();
+        try {
+            serverSocket.close();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -55,13 +55,16 @@ class Handler extends Thread {
     DataInputStream dis;
     PrintStream ps;
     static Vector<Handler> clientsVector = new Vector<Handler>();
+    Socket socket;
     ServerHandlerLogic serverHandlerLogic;
+    String[] operation = null;
 
-    public Handler(Socket cs) {
+    public Handler(Socket socket) {
         serverHandlerLogic = new ServerHandlerLogic();
         try {
-            dis = new DataInputStream(cs.getInputStream());
-            ps = new PrintStream(cs.getOutputStream());
+            dis = new DataInputStream(socket.getInputStream());
+            ps = new PrintStream(socket.getOutputStream());
+            this.socket = socket;
             Handler.clientsVector.add(this);
             start();
         } catch (IOException ex) {
@@ -76,7 +79,8 @@ class Handler extends Thread {
                 String str = dis.readLine();
                 if (str != null) {
                     System.out.println("from client " + str);
-                    serverHandlerLogic.divideMessage(str);
+                    operation = serverHandlerLogic.divideMessage(str);
+                    doAction();
                     sendMessageToAll(str);
                 }
             } catch (IOException ex) {
@@ -85,8 +89,6 @@ class Handler extends Thread {
 
         }
     }
-    
-     
 
     void sendMessageToAll(String msg) {
 
@@ -94,6 +96,30 @@ class Handler extends Thread {
             //clientsVector[i].ps.println(msg);   
             clientsVector.get(i).ps.println(msg);
         }
+    }
+
+    void doAction() {
+
+        if (operation[0].equals("signIn")) {
+            System.out.println("siginINNNNNNNNNNNNNNNNNNNNNN");
+            int index = getClientIndex();
+            if (serverHandlerLogic.checkUserExist()) {
+                clientsVector.get(index).ps.println("signInVerified");
+            } else {
+                clientsVector.get(index).ps.println("signInNotVerified");
+            }
+        }
+    }
+
+    int getClientIndex() {
+
+        for (int i = 0; i < clientsVector.size(); i++) {
+            System.out.println("ip ser=" + socket.getInetAddress().getHostAddress());
+            if (operation[1].equals(socket.getInetAddress().getHostAddress())) {
+                return i;
+            }
+        }
+        return -1;
     }
 
 }
