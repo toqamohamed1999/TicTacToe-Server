@@ -5,7 +5,9 @@
  */
 package tictactoe.server;
 
-import Database.DatabaseRepo;
+import Database.DatabaseConnection;
+import Database.DatabaseOperations;
+import Logic.ServerHandlerLogic;
 import org.apache.derby.jdbc.ClientDriver;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -39,7 +41,7 @@ public class ServerHandler {
     }
 
     void stopServer() {
-        try {
+        try { 
            serverSocket.close();
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -53,10 +55,10 @@ class Handler extends Thread {
     DataInputStream dis;
     PrintStream ps;
     static Vector<Handler> clientsVector = new Vector<Handler>();
-    DatabaseRepo databaseRepo;
+    ServerHandlerLogic serverHandlerLogic;
 
     public Handler(Socket cs) {
-        databaseRepo = DatabaseRepo.getInstanse();
+        serverHandlerLogic = new ServerHandlerLogic();
         try {
             dis = new DataInputStream(cs.getInputStream());
             ps = new PrintStream(cs.getOutputStream());
@@ -74,7 +76,7 @@ class Handler extends Thread {
                 String str = dis.readLine();
                 if (str != null) {
                     System.out.println("from client " + str);
-                    divideMessage(str);
+                    serverHandlerLogic.divideMessage(str);
                     sendMessageToAll(str);
                 }
             } catch (IOException ex) {
@@ -91,13 +93,6 @@ class Handler extends Thread {
         for (int i = 0; i < clientsVector.size(); i++) {
             //clientsVector[i].ps.println(msg);   
             clientsVector.get(i).ps.println(msg);
-        }
-    }
-
-    void divideMessage(String str) {
-        String[] arrOfStr = str.split(",");
-        if (arrOfStr[0].equalsIgnoreCase("signIn")) {
-            databaseRepo.checkUserExist(arrOfStr[1], arrOfStr[2]);
         }
     }
 
