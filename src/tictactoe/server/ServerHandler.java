@@ -5,6 +5,7 @@
  */
 package tictactoe.server;
 
+import org.apache.derby.jdbc.ClientDriver;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
