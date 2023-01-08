@@ -108,6 +108,8 @@ class Handler extends Thread {
             } else {
                 clientsVector.get(index).ps.println("signInNotVerified");
             }
+        } else if (operation[0].equals("getOnlineUsers")) {
+            sendAllOnlineUsers();
         }
     }
 
@@ -120,6 +122,15 @@ class Handler extends Thread {
             }
         }
         return -1;
+    }
+
+    void sendAllOnlineUsers() {
+
+        for (int i = 0; i < clientsVector.size(); i++) {
+            String ip = clientsVector.get(i).socket.getInetAddress().getHostAddress();
+            System.out.println("ip ser=" + ip);
+            ps.println("sendAllUsers,"+ip);
+        }
     }
 
 }
