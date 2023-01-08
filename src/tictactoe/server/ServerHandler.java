@@ -58,9 +58,11 @@ class Handler extends Thread {
     Socket socket;
     ServerHandlerLogic serverHandlerLogic;
     String[] operation = null;
+    DatabaseOperations databaseOperations;
 
     public Handler(Socket socket) {
         serverHandlerLogic = new ServerHandlerLogic();
+        databaseOperations = new DatabaseOperations();
         try {
             dis = new DataInputStream(socket.getInputStream());
             ps = new PrintStream(socket.getOutputStream());
@@ -82,6 +84,9 @@ class Handler extends Thread {
                     operation = serverHandlerLogic.divideMessage(str);
                     doAction();
                     sendMessageToAll(str);
+
+                    //  String[] arrOfStr = str.split(",");
+                    //  databaseOperations.signUpDatabase(arrOfStr);  
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -110,6 +115,16 @@ class Handler extends Thread {
             }
         } else if (operation[0].equals("getOnlineUsers")) {
             sendAllOnlineUsers();
+        } else if (operation[0].equals("SignUp")) {
+
+            int index = getClientIndex();
+            if (serverHandlerLogic.checksignUpUserExist()== false) {
+                clientsVector.get(index).ps.println("signUpVerified");
+                System.out.println("####################");
+                databaseOperations.signUpDatabase(operation);
+            } else {
+                clientsVector.get(index).ps.println("signUpNotVerified");
+            }
         }
     }
 
@@ -120,6 +135,7 @@ class Handler extends Thread {
             if (operation[1].equals(socket.getInetAddress().getHostAddress())) {
                 return i;
             }
+         
         }
         return -1;
     }
@@ -129,7 +145,7 @@ class Handler extends Thread {
         for (int i = 0; i < clientsVector.size(); i++) {
             String ip = clientsVector.get(i).socket.getInetAddress().getHostAddress();
             System.out.println("ip ser=" + ip);
-            ps.println("sendAllUsers,"+ip);
+            ps.println("sendAllUsers," + ip);
         }
     }
 

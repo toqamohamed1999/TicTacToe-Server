@@ -69,5 +69,29 @@ public class DatabaseOperations {
         }
         return false;
     }
+    
+    
+    
+  public void signUpDatabase(String[] signUpData) {    
+        
+      //  System.out.println("User Exisist = " + checkUserExist(signUpData[1], signUpData[2]));
+      
+       if(checkUserExist(signUpData[1], signUpData[2])==false)   { 
+        try {
+
+            pst = con.prepareStatement("INSERT INTO \"MYUSER\" (\"userName\", \"email\", \"password\", \"gender\")VALUES(?,?,?,?)");
+
+            for (int i = 2; i < signUpData.length; i++) {
+                pst.setString(i , signUpData[i]);
+            }
+
+            int rs = pst.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        }
+        
+    }
+    
 
 }

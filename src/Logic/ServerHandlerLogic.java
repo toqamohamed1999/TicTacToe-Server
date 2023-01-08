@@ -23,5 +23,13 @@ public class ServerHandlerLogic {
         }
         return false;
     }
+    
+      public boolean checksignUpUserExist() {
+          System.out.println("$$$$$"+operationArr[3]+operationArr[4]);
+        if (databaseOperations.getUser(operationArr[3], operationArr[4])) {
+            return true;
+        }
+        return false;
+    }
 
 }
