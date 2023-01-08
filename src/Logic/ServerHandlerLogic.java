@@ -18,7 +18,7 @@ public class ServerHandlerLogic {
     }
 
     public boolean checkUserExist() {
-        if (databaseOperations.checkUserExist(operationArr[2], operationArr[3])) {
+        if (databaseOperations.getUser(operationArr[2], operationArr[3])) {
             return true;
         }
         return false;
