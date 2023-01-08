@@ -1,5 +1,6 @@
 package tictactoe.server;
 
+import Logic.ServerHandler;
 import java.net.URL;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

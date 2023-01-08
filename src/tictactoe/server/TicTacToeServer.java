@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package tictactoe.server;
+import Logic.ServerHandler;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

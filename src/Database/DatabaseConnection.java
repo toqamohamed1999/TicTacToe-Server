@@ -13,7 +13,7 @@ import org.apache.derby.jdbc.ClientDriver;
 public class DatabaseConnection {
 
     private static DatabaseConnection databaseConnection;
-    Connection con = null;
+    Connection con ;
 
     private DatabaseConnection() {
         try {

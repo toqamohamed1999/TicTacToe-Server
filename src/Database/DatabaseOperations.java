@@ -7,21 +7,23 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DatabaseOperations {
 
     DatabaseConnection databaseConnection;
-    PreparedStatement pst = null;
+    public PreparedStatement pst;
+    public Statement statement;
     ArrayList<User> usersList = new ArrayList();
     User user;
-    Connection con;
-    
+    public Connection con;
+
     public DatabaseOperations() {
         databaseConnection = DatabaseConnection.getInstanse();
         con = databaseConnection.con;
         getAllUsers();
     }
-    
 
     public void getAllUsers() {
         usersList.clear();
@@ -39,17 +41,34 @@ public class DatabaseOperations {
             ex.printStackTrace();
         }
     }
-    
-   
-    
-    
-     public boolean checkUserExist(String email,String password) {
+
+    public boolean checkUserExist(String email, String password) {
         for (User user : usersList) {
-            if (email.equalsIgnoreCase(user.getEmail())&&password.equals(user.getPassword())) {
+            if (email.equalsIgnoreCase(user.getEmail()) && password.equals(user.getPassword())) {
                 return true;
             }
         }
         return false;
+    }
+
+    public void signUpDatabase(String[] signUpData) {    
+        
+      //  System.out.println("User Exisist = " + checkUserExist(signUpData[1], signUpData[2]));
+        if(checkUserExist(signUpData[1], signUpData[2])==false)   { 
+        try {
+
+            pst = con.prepareStatement("INSERT INTO \"MYUSER\" (\"userName\", \"email\", \"password\", \"gender\")VALUES(?,?,?,?)");
+
+            for (int i = 0; i < signUpData.length; i++) {
+                pst.setString(i + 1, signUpData[i]);
+            }
+
+            int rs = pst.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        }
+        
     }
 
 }

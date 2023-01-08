@@ -1,6 +1,7 @@
 package Logic;
 
 import Database.DatabaseOperations;
+import java.sql.SQLException;
 
 public class ServerHandlerLogic {
 
@@ -17,5 +18,7 @@ public class ServerHandlerLogic {
             System.out.println("$$$$$$$$$$$$$$$$$$$$$$" + databaseOperations.checkUserExist(arrOfStr[1], arrOfStr[2]));
         }
     }
+
+  
 
 }
