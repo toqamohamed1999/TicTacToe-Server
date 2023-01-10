@@ -104,10 +104,10 @@ class Handler extends Thread {
     }
 
     void doAction() {
-
+        int index = getClientIndex();
+        System.out.println("index client = " + index);
         if (operation[0].equals("signIn")) {
             System.out.println("siginINNNNNNNNNNNNNNNNNNNNNN");
-            int index = getClientIndex();
             if (serverHandlerLogic.checkUserExist()) {
                 clientsVector.get(index).ps.println("signInVerified");
             } else {
@@ -115,13 +115,12 @@ class Handler extends Thread {
             }
         } else if (operation[0].equals("getOnlineUsers")) {
             sendAllOnlineUsers();
-        } else if (operation[0].equals("SignUp")) {
-
-            int index = getClientIndex();
-            if (serverHandlerLogic.checksignUpUserExist()== false) {
+        }
+        if (operation[0].equals("SignUp")) {
+            clientsVector.get(index).ps.println("*********signUpVerified");
+            index = getClientIndex();
+            if (serverHandlerLogic.checksignUp() == true) {
                 clientsVector.get(index).ps.println("signUpVerified");
-                System.out.println("####################");
-                databaseOperations.signUpDatabase(operation);
             } else {
                 clientsVector.get(index).ps.println("signUpNotVerified");
             }
@@ -133,9 +132,10 @@ class Handler extends Thread {
         for (int i = 0; i < clientsVector.size(); i++) {
             System.out.println("ip ser=" + socket.getInetAddress().getHostAddress());
             if (operation[1].equals(socket.getInetAddress().getHostAddress())) {
+                System.out.println("trueeeeeeeeeeeeeeeeeeeeeeeeeeee");
                 return i;
             }
-         
+
         }
         return -1;
     }

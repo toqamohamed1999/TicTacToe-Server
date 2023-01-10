@@ -47,10 +47,10 @@ public class DatabaseOperations {
             s.setString(1, email);
             s.setString(2, Password);
             ResultSet rs = s.executeQuery();
-            
+
             if (rs.next()) {
                 user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("email"), rs.getString("password"), rs.getString("gender"), rs.getInt("score"), rs.getString("recordspath"));
-                System.out.println("heloooooooooooooo"+user.toString());
+                System.out.println("heloooooooooooooo" + user.toString());
                 return true;
             }
             stmt.close();
@@ -69,29 +69,26 @@ public class DatabaseOperations {
         }
         return false;
     }
-    
-    
-    
-  public void signUpDatabase(String[] signUpData) {    
-        
-      //  System.out.println("User Exisist = " + checkUserExist(signUpData[1], signUpData[2]));
-      
-       if(checkUserExist(signUpData[1], signUpData[2])==false)   { 
+
+    public int signUpDatabase(String[] signUpData) {
+        int rs = -1;
+        //  System.out.println("User Exisist = " + checkUserExist(signUpData[1], signUpData[2]));
         try {
 
             pst = con.prepareStatement("INSERT INTO \"MYUSER\" (\"userName\", \"email\", \"password\", \"gender\")VALUES(?,?,?,?)");
 
             for (int i = 2; i < signUpData.length; i++) {
-                pst.setString(i , signUpData[i]);
-            }
 
-            int rs = pst.executeUpdate();
+                pst.setString(i-1, signUpData[i]);
+
+                System.out.println("the element in " + i + " =" + signUpData[i]);
+            }
+            rs = pst.executeUpdate();
+
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        }
-        
+        return rs;
     }
-    
 
 }
