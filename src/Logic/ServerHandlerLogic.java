@@ -23,5 +23,12 @@ public class ServerHandlerLogic {
         }
         return false;
     }
+    
+      public boolean checksignUp() {
+        if (databaseOperations.signUpDatabase(operationArr)!=-1) {
+            return true;
+        }
+        return false;
+    }
 
 }

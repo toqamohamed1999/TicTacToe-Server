@@ -8,7 +8,6 @@ package tictactoe.server;
 import Database.DatabaseConnection;
 import Database.DatabaseOperations;
 import Logic.ServerHandlerLogic;
-import org.apache.derby.jdbc.ClientDriver;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -58,9 +57,11 @@ class Handler extends Thread {
     Socket socket;
     ServerHandlerLogic serverHandlerLogic;
     String[] operation = null;
+    DatabaseOperations databaseOperations;
 
     public Handler(Socket socket) {
         serverHandlerLogic = new ServerHandlerLogic();
+        databaseOperations = new DatabaseOperations();
         try {
             dis = new DataInputStream(socket.getInputStream());
             ps = new PrintStream(socket.getOutputStream());
@@ -82,6 +83,9 @@ class Handler extends Thread {
                     operation = serverHandlerLogic.divideMessage(str);
                     doAction();
                     sendMessageToAll(str);
+
+                    //  String[] arrOfStr = str.split(",");
+                    //  databaseOperations.signUpDatabase(arrOfStr);  
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -99,10 +103,10 @@ class Handler extends Thread {
     }
 
     void doAction() {
-
+        int index = getClientIndex();
+        System.out.println("index client = " + index);
         if (operation[0].equals("signIn")) {
             System.out.println("siginINNNNNNNNNNNNNNNNNNNNNN");
-            int index = getClientIndex();
             if (serverHandlerLogic.checkUserExist()) {
                 clientsVector.get(index).ps.println("signInVerified");
             } else {
@@ -111,6 +115,15 @@ class Handler extends Thread {
         } else if (operation[0].equals("getOnlineUsers")) {
             sendAllOnlineUsers();
         }
+        if (operation[0].equals("SignUp")) {
+            clientsVector.get(index).ps.println("*********signUpVerified");
+            index = getClientIndex();
+            if (serverHandlerLogic.checksignUp() == true) {
+                clientsVector.get(index).ps.println("signUpVerified");
+            } else {
+                clientsVector.get(index).ps.println("signUpNotVerified");
+            }
+        }
     }
 
     int getClientIndex() {
@@ -118,8 +131,10 @@ class Handler extends Thread {
         for (int i = 0; i < clientsVector.size(); i++) {
             System.out.println("ip ser=" + socket.getInetAddress().getHostAddress());
             if (operation[1].equals(socket.getInetAddress().getHostAddress())) {
+                System.out.println("trueeeeeeeeeeeeeeeeeeeeeeeeeeee");
                 return i;
             }
+
         }
         return -1;
     }
@@ -129,7 +144,7 @@ class Handler extends Thread {
         for (int i = 0; i < clientsVector.size(); i++) {
             String ip = clientsVector.get(i).socket.getInetAddress().getHostAddress();
             System.out.println("ip ser=" + ip);
-            ps.println("sendAllUsers,"+ip);
+            ps.println("sendAllUsers," + ip);
         }
     }
 
