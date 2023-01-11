@@ -79,23 +79,25 @@ public class ServerScreen extends AnchorPane {
     }
 
     ServerHandler serverHandler = null;
-
+    Thread th;
     void startServer() {
         System.out.println("############# server start");
         startStopButton.setText("Stop");
         serverHandler = new ServerHandler();
-        new Thread(new Runnable() {
+        th=new Thread(new Runnable() {
             @Override
             public void run() {
                 serverHandler.startServer();
             }
-        }).start();
+        });
+        th.start();
 
     }
 
     void stopServer() {
         System.out.println("############# server stop");
         startStopButton.setText("Start");
+        th.stop();
         serverHandler.stopServer();
     }
 

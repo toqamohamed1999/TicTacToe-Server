@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.Vector;
 
 /**
@@ -30,20 +31,24 @@ public class ServerHandler {
     void startServer() {
         try {
             serverSocket = new ServerSocket(5005);
-            while (true) {
-                Socket socket = serverSocket.accept();
-                new Handler(socket);
+            if (!serverSocket.isClosed()) {
+                while (true) {
+                    Socket socket = serverSocket.accept();
+                    new Handler(socket);
+                }
             }
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+
     }
 
     void stopServer() {
         try {
             serverSocket.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
+            serverSocket = null;
+        } catch (Exception ex) {
+
         }
     }
 
@@ -86,9 +91,13 @@ class Handler extends Thread {
 
                     //  String[] arrOfStr = str.split(",");
                     //  databaseOperations.signUpDatabase(arrOfStr);  
+                } else {
+                    this.stop();
+                    clientsVector.remove(this);
                 }
             } catch (IOException ex) {
-                ex.printStackTrace();
+                this.stop();
+                clientsVector.remove(this);
             }
 
         }
@@ -97,16 +106,27 @@ class Handler extends Thread {
     void sendMessageToAll(String msg) {
 
         for (int i = 0; i < clientsVector.size(); i++) {
-            //clientsVector[i].ps.println(msg);   
-            clientsVector.get(i).ps.println(msg);
+            //clientsVector[i].ps.println(msg); 
+            clientsVector.get(i).ps.println(msg + i);
+        }
+    }
+
+    void sendMessageToAll(String msg, String ip) {
+
+        for (int i = 0; i < clientsVector.size(); i++) {
+            //clientsVector[i].ps.println(msg); 
+            if (socket.getInetAddress().getHostAddress().equals(ip)) {
+                clientsVector.get(i).ps.println(msg);
+            }
         }
     }
 
     void doAction() {
-        int index = getClientIndex();
-        System.out.println("index client = " + index);
+        int index;
+
         if (operation[0].equals("signIn")) {
             System.out.println("siginINNNNNNNNNNNNNNNNNNNNNN");
+            index = getClientIndex();
             if (serverHandlerLogic.checkUserExist()) {
                 clientsVector.get(index).ps.println("signInVerified");
             } else {
@@ -115,13 +135,20 @@ class Handler extends Thread {
         } else if (operation[0].equals("getOnlineUsers")) {
             sendAllOnlineUsers();
         }
+
         if (operation[0].equals("SignUp")) {
-            clientsVector.get(index).ps.println("*********signUpVerified");
             index = getClientIndex();
+            System.out.println("indexxxxxx = " + index);
+            //  clientsVector.get(index).ps.println("*********signUpVerified");
             if (serverHandlerLogic.checksignUp() == true) {
+                System.out.println("SignUpp trueeeeeeeee");
+                //  sendMessageToAll("sucessssssssssssssssssssssss");
                 clientsVector.get(index).ps.println("signUpVerified");
+                sendMessageToAll("signUpVerified", operation[1]);
             } else {
+                System.out.println("SignUpp not trueeeeeeeee");
                 clientsVector.get(index).ps.println("signUpNotVerified");
+                sendMessageToAll("signUpNotVerified", operation[1]);
             }
         }
     }
@@ -130,11 +157,14 @@ class Handler extends Thread {
 
         for (int i = 0; i < clientsVector.size(); i++) {
             System.out.println("ip ser=" + socket.getInetAddress().getHostAddress());
-            if (operation[1].equals(socket.getInetAddress().getHostAddress())) {
-                System.out.println("trueeeeeeeeeeeeeeeeeeeeeeeeeeee");
-                return i;
-            }
+            if (operation[0].equals("signIn") || operation[0].equals("SignUp")) {
+                System.out.println("operation [[[[1111]]]]" + Arrays.toString(operation));
+                if (operation[1].equals(socket.getInetAddress().getHostAddress())) {
+                    System.out.println("trueeeeeeeeeeeeeeeeeeeeeeeeeeee");
+                    return i;
+                }
 
+            }
         }
         return -1;
     }

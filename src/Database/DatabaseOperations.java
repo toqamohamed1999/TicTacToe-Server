@@ -86,7 +86,7 @@ public class DatabaseOperations {
             rs = pst.executeUpdate();
 
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            
         }
         return rs;
     }
