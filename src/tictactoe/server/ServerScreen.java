@@ -1,5 +1,6 @@
 package tictactoe.server;
 
+import Database.DatabaseOperations;
 import java.net.URL;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
+import org.apache.derby.database.Database;
 
 public class ServerScreen extends AnchorPane {
 
@@ -71,20 +73,23 @@ public class ServerScreen extends AnchorPane {
     }
 
     private ObservableList<Data> getChartData() {
+
         ObservableList<Data> list = FXCollections.observableArrayList();
-        list.addAll(new PieChart.Data("Online", 80),
-                new PieChart.Data("Offline", 20));
+        list.addAll(new PieChart.Data("Online", 20),
+                new PieChart.Data("Offline", 80));
 
         return list;
     }
 
     ServerHandler serverHandler = null;
     Thread th;
+
     void startServer() {
         System.out.println("############# server start");
         startStopButton.setText("Stop");
         serverHandler = new ServerHandler();
-        th=new Thread(new Runnable() {
+
+        th = new Thread(new Runnable() {
             @Override
             public void run() {
                 serverHandler.startServer();
