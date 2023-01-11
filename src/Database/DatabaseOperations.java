@@ -13,7 +13,7 @@ public class DatabaseOperations {
     DatabaseConnection databaseConnection;
     PreparedStatement pst = null;
     ArrayList<User> usersList = new ArrayList();
-    User user;
+    User user = null;
     Connection con;
 
     public DatabaseOperations() {
@@ -90,5 +90,25 @@ public class DatabaseOperations {
         }
         return rs;
     }
+     public User getUserUsingEmail(String email) {
+        try {
+            Statement stmt = con.createStatement();
+            String queryString = new String(
+                    "select * from myUser where \"email\" = ?");
+            PreparedStatement s = con.prepareStatement(queryString);
+            s.setString(1, email);
+            ResultSet rs = s.executeQuery();
+            System.out.println("emaillllllllllllllllllll "+email);
+            if (rs.next()) {
+                System.out.println("enterrrrrrrrrrrrrrrrrrrrrrrrrr");
+                user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("email"), rs.getString("password"), rs.getString("gender"), rs.getInt("score"), rs.getString("recordspath"));
+            }
+            stmt.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return user;
+    }
+     
 
 }
