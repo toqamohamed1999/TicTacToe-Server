@@ -134,6 +134,9 @@ class Handler extends Thread {
                 //   clientsVector.get(index).ps.println("signInVerified");
                 sendMessageToAll("signInVerified", operation[1]);
                 serverHandlerLogic.addUserToOnlineList();
+                //  sendMessageToAll("refreshOnlineList");
+                String data = serverHandlerLogic.getProfileData(operation[2]);
+                sendMessageToAll("profileData,"+data, operation[1]);
             } else {
                 sendMessageToAll("signInNotVerified", operation[1]);
                 //   clientsVector.get(index).ps.println("signInNotVerified");
@@ -147,6 +150,10 @@ class Handler extends Thread {
             if (serverHandlerLogic.checksignUp() == true) {
                 //  clientsVector.get(index).ps.println("signUpVerified");
                 sendMessageToAll("signUpVerified", operation[1]);
+                serverHandlerLogic.addUserToOnlineList();
+                //  sendMessageToAll("refreshOnlineList");
+                String data = serverHandlerLogic.getProfileData(operation[3]);
+                sendMessageToAll("profileData,"+data, operation[1]);
             } else {
                 //clientsVector.get(index).ps.println("signUpNotVerified");
                 sendMessageToAll("signUpNotVerified", operation[1]);
@@ -158,8 +165,8 @@ class Handler extends Thread {
             //clientsVector.get(index).ps.println("recieveRequest,"+operation[1]);
             sendMessageToAll("recieveRequest," + operation[1], operation[2]);
         }
-        
-          if (operation[0].equals("acceptRequest")) {
+
+        if (operation[0].equals("acceptRequest")) {
             // index = getClientIndex(operation[2]);
             //clientsVector.get(index).ps.println("recieveRequest,"+operation[1]);
             sendMessageToAll("confirmRequest," + operation[1], operation[2]);

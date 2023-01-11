@@ -49,4 +49,10 @@ public class ServerHandlerLogic {
         return usersList;
     }
 
+    public String getProfileData(String email) {
+        user = databaseOperations.getUserUsingEmail(email);
+        String st = user.getIP() + "," + user.getEmail() + "," + user.getScore() + "," + user.getGender();
+        return st;
+    }
+
 }
