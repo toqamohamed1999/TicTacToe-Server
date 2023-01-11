@@ -52,8 +52,6 @@ public class ServerHandler {
 
         } catch (Exception ex) {
 
-
-        
         }
     }
 
@@ -132,39 +130,39 @@ class Handler extends Thread {
         int index;
         if (operation[0].equals("signIn")) {
             index = getClientIndex();
-            System.out.println("siginINNNNNNNNNNNNNNNNNNNNNN");
-            index = getClientIndex();
             if (serverHandlerLogic.checkUserExist()) {
-                clientsVector.get(index).ps.println("signInVerified");
+                //   clientsVector.get(index).ps.println("signInVerified");
+                sendMessageToAll("signInVerified", operation[1]);
                 serverHandlerLogic.addUserToOnlineList();
             } else {
-                clientsVector.get(index).ps.println("signInNotVerified");
+                sendMessageToAll("signInNotVerified", operation[1]);
+                //   clientsVector.get(index).ps.println("signInNotVerified");
             }
         } else if (operation[0].equals("getOnlineUsers")) {
             sendAllOnlineUsers();
         }
 
         if (operation[0].equals("SignUp")) {
-             index = getClientIndex();
-            clientsVector.get(index).ps.println("*********signUpVerified");
             index = getClientIndex();
-            System.out.println("indexxxxxx = " + index);
-            //  clientsVector.get(index).ps.println("*********signUpVerified");
             if (serverHandlerLogic.checksignUp() == true) {
-                System.out.println("SignUpp trueeeeeeeee");
-                //  sendMessageToAll("sucessssssssssssssssssssssss");
-                clientsVector.get(index).ps.println("signUpVerified");
+                //  clientsVector.get(index).ps.println("signUpVerified");
                 sendMessageToAll("signUpVerified", operation[1]);
             } else {
-                System.out.println("SignUpp not trueeeeeeeee");
-                clientsVector.get(index).ps.println("signUpNotVerified");
+                //clientsVector.get(index).ps.println("signUpNotVerified");
                 sendMessageToAll("signUpNotVerified", operation[1]);
             }
         }
 
         if (operation[0].equals("sendRequest")) {
-              index = getClientIndex(operation[2]);
-            clientsVector.get(index).ps.println("recieveRequest,"+operation[1]);
+            // index = getClientIndex(operation[2]);
+            //clientsVector.get(index).ps.println("recieveRequest,"+operation[1]);
+            sendMessageToAll("recieveRequest," + operation[1], operation[2]);
+        }
+        
+          if (operation[0].equals("acceptRequest")) {
+            // index = getClientIndex(operation[2]);
+            //clientsVector.get(index).ps.println("recieveRequest,"+operation[1]);
+            sendMessageToAll("confirmRequest," + operation[1], operation[2]);
         }
     }
 
@@ -185,7 +183,7 @@ class Handler extends Thread {
 
     int getClientIndex(String ip) {
         for (int i = 0; i < clientsVector.size(); i++) {
-          //  System.out.println("ip ser=" + this.socket.getInetAddress().getHostAddress());
+            //  System.out.println("ip ser=" + this.socket.getInetAddress().getHostAddress());
             System.out.println("operationnn = " + Arrays.toString(operation));
             if (ip.equals(socket.getInetAddress().getHostAddress())) {
                 System.out.println("trueeeeeeeeeeeeeeeeeeeeeeeeeeee");
@@ -194,6 +192,7 @@ class Handler extends Thread {
         }
         return -1;
     }
+
     void sendAllOnlineUsers() {
         usersList = serverHandlerLogic.getOnlineListUsers();
         for (int i = 0; i < usersList.size(); i++) {
