@@ -91,7 +91,7 @@ class Handler extends Thread {
                     System.out.println("from client " + str);
                     operation = serverHandlerLogic.divideMessage(str);
                     doAction();
-                    sendMessageToAll(str);
+                    // sendMessageToAll(str);
 
                     //  String[] arrOfStr = str.split(",");
                     //  databaseOperations.signUpDatabase(arrOfStr);  
@@ -119,7 +119,22 @@ class Handler extends Thread {
 
         for (int i = 0; i < clientsVector.size(); i++) {
             //clientsVector[i].ps.println(msg); 
+            System.out.println("indexfff = " + clientsVector.get(i).socket.getInetAddress().getHostAddress() + "  " + i);
+            System.out.println("indexddd = " + socket.getInetAddress().getHostAddress() + "  " + i);
+            
             if (socket.getInetAddress().getHostAddress().equals(ip)) {
+                clientsVector.get(i).ps.println(msg);
+            }
+            System.out.println("indmmm = " + ip+ "  " + i);
+          //  System.out.println("indmmmm = " + loopIp+ "  " + i);
+
+            if ( clientsVector.get(i).socket.getInetAddress().getHostAddress().equals(ip) && msg.contains("recieveRequest")) {
+                System.out.println("acceptRequesttt hiiiiiiiiiii = " + i);
+                clientsVector.get(i).ps.println(msg);
+            }
+            
+            if ( clientsVector.get(i).socket.getInetAddress().getHostAddress().equals(ip) && msg.contains("confirmRequest")) {
+                System.out.println("acceptRequesttt mmmmmee = " + i);
                 clientsVector.get(i).ps.println(msg);
             }
         }
@@ -136,7 +151,7 @@ class Handler extends Thread {
                 serverHandlerLogic.addUserToOnlineList();
                 //  sendMessageToAll("refreshOnlineList");
                 String data = serverHandlerLogic.getProfileData(operation[2]);
-                sendMessageToAll("profileData,"+data, operation[1]);
+                sendMessageToAll("profileData," + data, operation[1]);
             } else {
                 sendMessageToAll("signInNotVerified", operation[1]);
                 //   clientsVector.get(index).ps.println("signInNotVerified");
@@ -153,7 +168,7 @@ class Handler extends Thread {
                 serverHandlerLogic.addUserToOnlineList();
                 //  sendMessageToAll("refreshOnlineList");
                 String data = serverHandlerLogic.getProfileData(operation[3]);
-                sendMessageToAll("profileData,"+data, operation[1]);
+                sendMessageToAll("profileData," + data, operation[1]);
             } else {
                 //clientsVector.get(index).ps.println("signUpNotVerified");
                 sendMessageToAll("signUpNotVerified", operation[1]);
@@ -163,13 +178,13 @@ class Handler extends Thread {
         if (operation[0].equals("sendRequest")) {
             // index = getClientIndex(operation[2]);
             //clientsVector.get(index).ps.println("recieveRequest,"+operation[1]);
-            sendMessageToAll("recieveRequest," + operation[1], operation[2]);
+            sendMessageToAll("recieveRequest," + operation[1]+","+operation[2], operation[2]);
         }
 
-        if (operation[0].equals("acceptRequest")) {
+        if (operation[0].equals("confirmRequestfromSecondPlayer")) {
             // index = getClientIndex(operation[2]);
             //clientsVector.get(index).ps.println("recieveRequest,"+operation[1]);
-            sendMessageToAll("confirmRequest," + operation[1], operation[2]);
+            sendMessageToAll("confirmRequest," + operation[2], operation[1]);
         }
     }
 
@@ -205,6 +220,7 @@ class Handler extends Thread {
         for (int i = 0; i < usersList.size(); i++) {
             String ip = clientsVector.get(i).socket.getInetAddress().getHostAddress();
             User user = usersList.get(i);
+        //    if(ip.equals(socket.getInetAddress().getHostAddress())){ continue;}
             ps.println("sendAllUsers," + ip + "," + user.getUserName() + "," + user.getEmail() + "," + user.getGender());
         }
     }
