@@ -2,6 +2,13 @@ package tictactoe.server;
 
 import Database.DatabaseOperations;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Set;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -13,19 +20,38 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
 import org.apache.derby.database.Database;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+import org.apache.derby.jdbc.ClientDriver;
+import static tictactoe.server.Handler.clientsVector;
 
 public class ServerScreen extends AnchorPane {
 
     protected final Label label;
     protected final PieChart pieChart;
     protected final Button startStopButton;
+    protected final Button refresh;
+    
+    Connection conn;
+    PreparedStatement pst;
+    ResultSet rs  ;
+    Double offline;
 
-    public ServerScreen() {
+    public ServerScreen(Stage stage) {
+        try {
+            DriverManager.registerDriver(new ClientDriver());
+            conn=DriverManager.getConnection("jdbc:derby://localhost:1527/TicTacToe","root","root");
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        
+         
 
         label = new Label();
         pieChart = new PieChart(getChartData());
         startStopButton = new Button();
-
+        refresh = new Button();
+         
         setId("AnchorPane");
         setPrefHeight(430.0);
         setPrefWidth(600.0);
@@ -65,19 +91,63 @@ public class ServerScreen extends AnchorPane {
 
             }
         });
+        
+        refresh.setLayoutX(400.0);
+        refresh.setLayoutY(100.0);
+        refresh.setMnemonicParsing(false);
+        refresh.setPrefHeight(25.0);
+        refresh.setPrefWidth(177.0);
+        refresh.setText("Refresh");
+        refresh.setTextFill(javafx.scene.paint.Color.valueOf("#f9002d"));
+        refresh.setFont(new Font("Impact", 24.0));
+        refresh.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+            pst = conn.prepareStatement("select count(*) from ROOT.MYUSER");
+            rs = pst.executeQuery() ;
+            if(rs.next())
+             offline=(double)rs.getInt(1);
+                    System.err.println(offline);
+            }
+            catch (Exception ex) {
+                ex.printStackTrace();
+            }
+                pieChart.setData(getChartData());
+
+            }
+        });
 
         getChildren().add(startStopButton);
+        getChildren().add(refresh);
         getChildren().add(pieChart);
         getChildren().add(label);
+        
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+    @Override
+    public void handle(WindowEvent event) {
+        stopServer();
+    }
+});
 
     }
-
+     
     private ObservableList<Data> getChartData() {
 
         ObservableList<Data> list = FXCollections.observableArrayList();
-        list.addAll(new PieChart.Data("Online", 20),
-                new PieChart.Data("Offline", 80));
-
+        System.err.println(offline);
+        if(offline!=null){
+            System.err.println("online: "+clientsVector.size());
+            System.err.println("offline: "+offline);
+            Set<Handler> set = new HashSet<Handler>(clientsVector);
+            list.addAll(new PieChart.Data("Online", set.size()),
+                new PieChart.Data("Offline", offline));
+        }
+        else{
+            list.addAll(new PieChart.Data("Online", 20),
+            new PieChart.Data("Offline", 80));
+        }
+       
         return list;
     }
 
@@ -98,7 +168,7 @@ public class ServerScreen extends AnchorPane {
         th.start();
 
     }
-
+    
     void stopServer() {
         System.out.println("############# server stop");
         startStopButton.setText("Start");
