@@ -124,11 +124,18 @@ public class ServerScreen extends AnchorPane {
         getChildren().add(label);
         
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-    @Override
-    public void handle(WindowEvent event) {
-        stopServer();
-    }
-});
+        @Override
+        public void handle(WindowEvent event) {
+            //serverHandler.stopServer();
+            if(startStopButton.getText().equals("Start")){
+                System.exit(0);
+            }
+            else{
+                stopServer();
+                System.exit(0);
+            }
+        }
+         });
 
     }
      
