@@ -15,7 +15,7 @@ public class TicTacToeServer extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root =new ServerScreen();
+        Parent root =new ServerScreen(stage);
         
         Scene scene = new Scene(root);
         
