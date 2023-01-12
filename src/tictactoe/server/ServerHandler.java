@@ -205,9 +205,6 @@ class Handler extends Thread {
         for (int i = 0; i < usersList.size(); i++) {
             String ip = clientsVector.get(i).socket.getInetAddress().getHostAddress();
             User user = usersList.get(i);
-            // System.out.println("mmmmmmmmm" + " ip ser=" + ip);
-            // System.out.println("mmmmmmmmmmmmmmmmmmmmmm" + user.toString());
-            //  ps.println("sendAllUsers," + ip);
             ps.println("sendAllUsers," + ip + "," + user.getUserName() + "," + user.getEmail() + "," + user.getGender());
         }
     }

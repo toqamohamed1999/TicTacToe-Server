@@ -1,5 +1,6 @@
 package tictactoe.server;
 
+import Database.DatabaseOperations;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,6 +19,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
+import org.apache.derby.database.Database;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.apache.derby.jdbc.ClientDriver;
@@ -122,15 +124,23 @@ public class ServerScreen extends AnchorPane {
         getChildren().add(label);
         
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-    @Override
-    public void handle(WindowEvent event) {
-        stopServer();
-    }
-});
+        @Override
+        public void handle(WindowEvent event) {
+            //serverHandler.stopServer();
+            if(startStopButton.getText().equals("Start")){
+                System.exit(0);
+            }
+            else{
+                stopServer();
+                System.exit(0);
+            }
+        }
+         });
 
     }
      
     private ObservableList<Data> getChartData() {
+
         ObservableList<Data> list = FXCollections.observableArrayList();
         System.err.println(offline);
         if(offline!=null){
@@ -150,11 +160,13 @@ public class ServerScreen extends AnchorPane {
 
     ServerHandler serverHandler = null;
     Thread th;
+
     void startServer() {
         System.out.println("############# server start");
         startStopButton.setText("Stop");
         serverHandler = new ServerHandler();
-        th=new Thread(new Runnable() {
+
+        th = new Thread(new Runnable() {
             @Override
             public void run() {
                 serverHandler.startServer();

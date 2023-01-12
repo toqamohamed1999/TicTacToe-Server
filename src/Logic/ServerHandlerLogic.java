@@ -51,8 +51,12 @@ public class ServerHandlerLogic {
 
     public String getProfileData(String email) {
         user = databaseOperations.getUserUsingEmail(email);
-        String st = user.getIP() + "," + user.getEmail() + "," + user.getScore() + "," + user.getGender();
+        String st = user.getUserName()+","+user.getEmail() + "," + user.getScore() + "," + user.getGender();
         return st;
+    }
+    
+     public int getusersCount(String email) {
+       return databaseOperations.getUsersCount();
     }
 
 }

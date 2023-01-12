@@ -110,5 +110,21 @@ public class DatabaseOperations {
         return user;
     }
      
+      public int getUsersCount() {
+        usersList.clear();
+        try {
+            Statement stmt = con.createStatement();
+            String queryString = new String("select COUNT(*) AS recordCount from myUser");
+            ResultSet rs = stmt.executeQuery(queryString);
+            while (rs.next()) {
+                int count = rs.getInt("recordCount");
+                return count;
+            }
+            stmt.close();
+        } catch (SQLException ex) {
+        }
+        return -1;
+    }
+
 
 }
