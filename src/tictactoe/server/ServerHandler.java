@@ -5,7 +5,6 @@
  */
 package tictactoe.server;
 
-import Database.DatabaseConnection;
 import Database.DatabaseOperations;
 import Logic.ServerHandlerLogic;
 import Logic.User;
@@ -15,7 +14,6 @@ import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Vector;
 
 /**
@@ -91,10 +89,7 @@ class Handler extends Thread {
                     System.out.println("from client " + str);
                     operation = serverHandlerLogic.divideMessage(str);
                     doAction();
-                    // sendMessageToAll(str);
-
-                    //  String[] arrOfStr = str.split(",");
-                    //  databaseOperations.signUpDatabase(arrOfStr);  
+                   // sendMessageToAll(str);
                 } else {
                     this.stop();
                     clientsVector.remove(this);
@@ -110,85 +105,73 @@ class Handler extends Thread {
     void sendMessageToAll(String msg) {
 
         for (int i = 0; i < clientsVector.size(); i++) {
-            //clientsVector[i].ps.println(msg); 
-            clientsVector.get(i).ps.println(msg + i);
+            clientsVector.get(i).ps.println(msg);
         }
     }
 
-    void sendMessageToAll(String msg, String ip) {
+    void sendMessageToSpecificUser(String msg, String ip) {
 
         for (int i = 0; i < clientsVector.size(); i++) {
-            //clientsVector[i].ps.println(msg); 
-            System.out.println("indexfff = " + clientsVector.get(i).socket.getInetAddress().getHostAddress() + "  " + i);
-            System.out.println("indexddd = " + socket.getInetAddress().getHostAddress() + "  " + i);
-            
-            if (socket.getInetAddress().getHostAddress().equals(ip)) {
-                clientsVector.get(i).ps.println(msg);
-            }
-            System.out.println("indmmm = " + ip+ "  " + i);
-          //  System.out.println("indmmmm = " + loopIp+ "  " + i);
 
-            if ( clientsVector.get(i).socket.getInetAddress().getHostAddress().equals(ip) && msg.contains("recieveRequest")) {
-                System.out.println("acceptRequesttt hiiiiiiiiiii = " + i);
-                clientsVector.get(i).ps.println(msg);
-            }
-            
-            if ( clientsVector.get(i).socket.getInetAddress().getHostAddress().equals(ip) && msg.contains("confirmRequest")) {
-                System.out.println("acceptRequesttt mmmmmee = " + i);
+            String loopIp = clientsVector.get(i).socket.getInetAddress().getHostAddress();
+            if (loopIp.equals(ip)) {
                 clientsVector.get(i).ps.println(msg);
             }
         }
     }
 
     void doAction() {
-
-        int index;
         if (operation[0].equals("signIn")) {
-            index = getClientIndex();
+            String userIp = operation[1];
             if (serverHandlerLogic.checkUserExist()) {
-                //   clientsVector.get(index).ps.println("signInVerified");
-                sendMessageToAll("signInVerified", operation[1]);
-                serverHandlerLogic.addUserToOnlineList();
-                //  sendMessageToAll("refreshOnlineList");
-                String data = serverHandlerLogic.getProfileData(operation[2]);
-                sendMessageToAll("profileData," + data, operation[1]);
+                String email = operation[2];
+                sendMessageToSpecificUser("signInVerified", userIp);
+                serverHandlerLogic.addUserToOnlineList(email);
+                //profile
+                String data = serverHandlerLogic.getProfileData(email);
+                sendMessageToSpecificUser("profileData," + data, userIp);
             } else {
-                sendMessageToAll("signInNotVerified", operation[1]);
-                //   clientsVector.get(index).ps.println("signInNotVerified");
+                sendMessageToSpecificUser("signInNotVerified", userIp);
+            }
+        } else if (operation[0].equals("SignUp")) {
+            String userIp = operation[1];
+            if (serverHandlerLogic.checksignUp() == true) {
+                String email = operation[3];
+                sendMessageToSpecificUser("signUpVerified", userIp);
+                serverHandlerLogic.addUserToOnlineList(email);
+                //profile
+                String data = serverHandlerLogic.getProfileData(email);
+                sendMessageToSpecificUser("profileData," + data, userIp);
+            } else {
+                sendMessageToSpecificUser("signUpNotVerified", userIp);
             }
         } else if (operation[0].equals("getOnlineUsers")) {
-            sendAllOnlineUsers();
-        }
-
-        if (operation[0].equals("SignUp")) {
-            index = getClientIndex();
-            if (serverHandlerLogic.checksignUp() == true) {
-                //  clientsVector.get(index).ps.println("signUpVerified");
-                sendMessageToAll("signUpVerified", operation[1]);
-                serverHandlerLogic.addUserToOnlineList();
-                //  sendMessageToAll("refreshOnlineList");
-                String data = serverHandlerLogic.getProfileData(operation[3]);
-                sendMessageToAll("profileData," + data, operation[1]);
-            } else {
-                //clientsVector.get(index).ps.println("signUpNotVerified");
-                sendMessageToAll("signUpNotVerified", operation[1]);
-            }
-        }
-
-        if (operation[0].equals("sendRequest")) {
-            // index = getClientIndex(operation[2]);
-            //clientsVector.get(index).ps.println("recieveRequest,"+operation[1]);
-            sendMessageToAll("recieveRequest," + operation[1]+","+operation[2], operation[2]);
-        }
-
-        if (operation[0].equals("confirmRequestfromSecondPlayer")) {
-            // index = getClientIndex(operation[2]);
-            //clientsVector.get(index).ps.println("recieveRequest,"+operation[1]);
-            sendMessageToAll("confirmRequest," + operation[2], operation[1]);
+            String senderIp = operation[1];
+            sendAllOnlineUsers(senderIp);
+        } else if (operation[0].equals("sendRequest")) {
+            String senderIp = operation[1];
+            String receiverIp = operation[2];
+            sendMessageToSpecificUser("recieveRequest," + senderIp + "," + receiverIp, receiverIp);
+        } else if (operation[0].equals("confirmRequestfromSecondPlayer")) {
+            String senderIp = operation[1];
+            String receiverIp = operation[2];
+            sendMessageToSpecificUser("confirmRequest," + receiverIp, senderIp);
         }
     }
 
-    int getClientIndex() {
+    void sendAllOnlineUsers(String senderIp) {
+        usersList = serverHandlerLogic.getOnlineListUsers();
+        for (int i = 0; i < usersList.size(); i++) {
+            String loopIp = clientsVector.get(i).socket.getInetAddress().getHostAddress();
+            User user = usersList.get(i);
+            //  if(loopIp.equals(senderIp)){ continue;}
+            ps.println("sendAllUsers," + loopIp + "," + user.getUserName() + "," + user.getEmail() + "," + user.getGender() + "," + user.getScore());
+        }
+    }
+}
+
+
+/*   int getClientIndex() {
         for (int i = 0; i < clientsVector.size(); i++) {
             System.out.println("ip ser=" + socket.getInetAddress().getHostAddress());
             if (operation[0].equals("signIn") || operation[0].equals("SignUp")) {
@@ -200,6 +183,7 @@ class Handler extends Thread {
 
             }
         }
+
         return -1;
     }
 
@@ -214,15 +198,4 @@ class Handler extends Thread {
         }
         return -1;
     }
-
-    void sendAllOnlineUsers() {
-        usersList = serverHandlerLogic.getOnlineListUsers();
-        for (int i = 0; i < usersList.size(); i++) {
-            String ip = clientsVector.get(i).socket.getInetAddress().getHostAddress();
-            User user = usersList.get(i);
-        //    if(ip.equals(socket.getInetAddress().getHostAddress())){ continue;}
-            ps.println("sendAllUsers," + ip + "," + user.getUserName() + "," + user.getEmail() + "," + user.getGender());
-        }
-    }
-
-}
+ */

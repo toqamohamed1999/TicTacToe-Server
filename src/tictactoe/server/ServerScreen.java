@@ -145,14 +145,14 @@ public class ServerScreen extends AnchorPane {
         System.err.println(offline);
         if(offline!=null){
             System.err.println("online: "+clientsVector.size());
-            System.err.println("offline: "+offline);
+            System.err.println("offline: "+(offline-clientsVector.size()));
             Set<Handler> set = new HashSet<Handler>(clientsVector);
             list.addAll(new PieChart.Data("Online", set.size()),
-                new PieChart.Data("Offline", offline));
+                new PieChart.Data("Offline", offline-clientsVector.size()));
         }
         else{
-            list.addAll(new PieChart.Data("Online", 20),
-            new PieChart.Data("Offline", 80));
+            list.addAll(new PieChart.Data("Online", 0),
+            new PieChart.Data("Offline", 100));
         }
        
         return list;

@@ -35,28 +35,25 @@ public class ServerHandlerLogic {
         return false;
     }
 
-    public void addUserToOnlineList() {
-        user = databaseOperations.getUserUsingEmail(operationArr[1]);
-        System.out.println("user============== " + user.toString());
+    public void addUserToOnlineList(String email) {
+        user = databaseOperations.getUserUsingEmail(email);
         if (user != null) {
             usersList.add(user);
-            System.out.println("sizelogic===== " + usersList.size());
         }
     }
 
     public ArrayList<User> getOnlineListUsers() {
-        System.out.println("sizelogic2===== " + usersList.size());
         return usersList;
     }
 
     public String getProfileData(String email) {
         user = databaseOperations.getUserUsingEmail(email);
-        String st = user.getUserName()+","+user.getEmail() + "," + user.getScore() + "," + user.getGender();
+        String st = user.getUserName() + "," + user.getEmail() + "," + user.getScore() + "," + user.getGender();
         return st;
     }
-    
-     public int getusersCount(String email) {
-       return databaseOperations.getUsersCount();
+
+    public int getusersCount(String email) {
+        return databaseOperations.getUsersCount();
     }
 
 }
