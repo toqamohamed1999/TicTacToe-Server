@@ -89,7 +89,7 @@ class Handler extends Thread {
                     System.out.println("from client " + str);
                     operation = serverHandlerLogic.divideMessage(str);
                     doAction();
-                   // sendMessageToAll(str);
+                    sendMessageToAll(str);
                 } else {
                     this.stop();
                     clientsVector.remove(this);
