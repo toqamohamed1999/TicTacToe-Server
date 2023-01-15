@@ -79,18 +79,19 @@ public class DatabaseOperations {
 
             for (int i = 2; i < signUpData.length; i++) {
 
-                pst.setString(i-1, signUpData[i]);
+                pst.setString(i - 1, signUpData[i]);
 
                 System.out.println("the element in " + i + " =" + signUpData[i]);
             }
             rs = pst.executeUpdate();
 
         } catch (SQLException ex) {
-            
+
         }
         return rs;
     }
-     public User getUserUsingEmail(String email) {
+
+    public User getUserUsingEmail(String email) {
         try {
             Statement stmt = con.createStatement();
             String queryString = new String(
@@ -98,7 +99,7 @@ public class DatabaseOperations {
             PreparedStatement s = con.prepareStatement(queryString);
             s.setString(1, email);
             ResultSet rs = s.executeQuery();
-            System.out.println("emaillllllllllllllllllll "+email);
+            System.out.println("emaillllllllllllllllllll " + email);
             if (rs.next()) {
                 System.out.println("enterrrrrrrrrrrrrrrrrrrrrrrrrr");
                 user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("email"), rs.getString("password"), rs.getString("gender"), rs.getInt("score"), rs.getString("recordspath"));
@@ -109,8 +110,8 @@ public class DatabaseOperations {
         }
         return user;
     }
-     
-      public int getUsersCount() {
+
+    public int getUsersCount() {
         usersList.clear();
         try {
             Statement stmt = con.createStatement();
@@ -126,5 +127,15 @@ public class DatabaseOperations {
         return -1;
     }
 
+    public void updateScore(String email, int score) {
+        try {
+            pst = con.prepareStatement("UPDATE myUser set score=? WHERE email =" + email);
+            pst.setInt(1, score);
+            int rs = pst.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+    }
 
 }

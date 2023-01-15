@@ -11,10 +11,14 @@ import Logic.User;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.Inet4Address;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -128,8 +132,9 @@ class Handler extends Thread {
                 sendMessageToSpecificUser("signInVerified", userIp);
                 serverHandlerLogic.addUserToOnlineList(email);
                 //profile
-                String data = serverHandlerLogic.getProfileData(email);
+                String data = serverHandlerLogic.getProfileData(email, userIp);
                 sendMessageToSpecificUser("profileData," + data, userIp);
+
             } else {
                 sendMessageToSpecificUser("signInNotVerified", userIp);
             }
@@ -140,11 +145,14 @@ class Handler extends Thread {
                 sendMessageToSpecificUser("signUpVerified", userIp);
                 serverHandlerLogic.addUserToOnlineList(email);
                 //profile
-                String data = serverHandlerLogic.getProfileData(email);
+                String data = serverHandlerLogic.getProfileData(email, userIp);
                 sendMessageToSpecificUser("profileData," + data, userIp);
+
             } else {
                 sendMessageToSpecificUser("signUpNotVerified", userIp);
             }
+
+            ////////////////////////////////////////////////////////////////
         } else if (operation[0].equals("getOnlineUsers")) {
             String senderIp = operation[1];
             sendAllOnlineUsers(senderIp);
@@ -152,20 +160,49 @@ class Handler extends Thread {
             String senderIp = operation[1];
             String receiverIp = operation[2];
             sendMessageToSpecificUser("recieveRequest," + senderIp + "," + receiverIp, receiverIp);
+//////////////////////////////////////////////////////////
+            String senderInfo = ServerHandlerLogic.map.get(senderIp);
+            String reciverInfo = ServerHandlerLogic.map.get(receiverIp);
+            System.out.println(senderInfo + "wwwwwwwwwwwwwwwwwwwwwww");
+            System.out.println(reciverInfo + "uuuuuuuuuuuuuuuuuuuuuuuu");
+
+            sendMessageToSpecificUser("getPlayersData," + senderIp + "," + senderInfo + "," + receiverIp + "," + reciverInfo, receiverIp);
+
         } else if (operation[0].equals("confirmRequestfromSecondPlayer")) {
             String senderIp = operation[1];
             String receiverIp = operation[2];
+
+            String senderInfo = ServerHandlerLogic.map.get(receiverIp);
+            String reciverInfo = ServerHandlerLogic.map.get(senderInfo);
+            System.out.println(senderInfo + "fffffffffffffffffffffff");
+            System.out.println(reciverInfo + "qqqqqqqqqqqqqqqqqqqqqqq");
+
             sendMessageToSpecificUser("confirmRequest," + receiverIp, senderIp);
+            sendMessageToSpecificUser("getPlayersData," + receiverIp + "," + senderInfo + "," + senderInfo + "," + reciverInfo, receiverIp);
+        } /////////////////////////////////////////////////////
+        else if (operation[0].equals("logOut")) {
+            String userIp = operation[1];
+            clientsVector.remove(this);
+            ServerHandlerLogic.map.remove(userIp);
+        } else if (operation[0].equals("updateScore")) {
+            String email = operation[1];
+            int score = Integer.valueOf(operation[2]);
+            serverHandlerLogic.databaseOperations.updateScore(email, score);
+        } else if (operation[0].equals("game")) {
+            String userIp = operation[1];
+
+            //sendMessageToSpecificUser("sendGame", userIp);
         }
     }
 
     void sendAllOnlineUsers(String senderIp) {
         usersList = serverHandlerLogic.getOnlineListUsers();
-        for (int i = 0; i < usersList.size(); i++) {
+        for (int i = 0; i < clientsVector.size(); i++) {
             String loopIp = clientsVector.get(i).socket.getInetAddress().getHostAddress();
             User user = usersList.get(i);
-            //  if(loopIp.equals(senderIp)){ continue;}
+           // if (loopIp.equals(senderIp)) {continue;}
             ps.println("sendAllUsers," + loopIp + "," + user.getUserName() + "," + user.getEmail() + "," + user.getGender() + "," + user.getScore());
+            System.out.println(user.toString());
         }
     }
 }

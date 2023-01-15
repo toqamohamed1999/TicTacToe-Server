@@ -2,13 +2,16 @@ package Logic;
 
 import Database.DatabaseOperations;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ServerHandlerLogic {
 
-    DatabaseOperations databaseOperations;
+    public DatabaseOperations databaseOperations;
     String[] operationArr = null;
     static ArrayList<User> usersList = new ArrayList<>();
     User user;
+    public static Map<String, String> map = new HashMap();
 
     public ServerHandlerLogic() {
         databaseOperations = new DatabaseOperations();
@@ -46,10 +49,11 @@ public class ServerHandlerLogic {
         return usersList;
     }
 
-    public String getProfileData(String email) {
+    public String getProfileData(String email, String userIp) {
         user = databaseOperations.getUserUsingEmail(email);
-        String st = user.getUserName() + "," + user.getEmail() + "," + user.getScore() + "," + user.getGender();
-        return st;
+        String data = user.getUserName() + "," + user.getEmail() + "," + user.getScore() + "," + user.getGender();
+        map.put(userIp, data);
+        return data;
     }
 
     public int getusersCount(String email) {
