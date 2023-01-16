@@ -75,7 +75,7 @@ public class DatabaseOperations {
         //  System.out.println("User Exisist = " + checkUserExist(signUpData[1], signUpData[2]));
         try {
 
-            pst = con.prepareStatement("INSERT INTO \"MYUSER\" (\"userName\", \"email\", \"password\", \"gender\")VALUES(?,?,?,?)");
+            pst = con.prepareStatement("INSERT INTO \"MYUSER\" (\"userName\", \"email\", \"password\", \"gender\",\"score\")VALUES(?,?,?,?,0)");
 
             for (int i = 2; i < signUpData.length; i++) {
 
@@ -126,11 +126,13 @@ public class DatabaseOperations {
         }
         return -1;
     }
-
+//UPDATE ROOT.MYUSER set "score"=20 WHERE "email"='ahmed@yahoo.com'
     public void updateScore(String email, int score) {
         try {
-            pst = con.prepareStatement("UPDATE myUser set score=? WHERE email =" + email);
+            pst = con.prepareStatement("UPDATE ROOT.MYUSER set \"score\"=? WHERE \"email\"=?");
+        
             pst.setInt(1, score);
+            pst.setString(2, email);
             int rs = pst.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
