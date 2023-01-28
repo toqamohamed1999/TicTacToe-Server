@@ -15,7 +15,6 @@ public class ServerHandlerLogic {
 
     public ServerHandlerLogic() {
         databaseOperations = new DatabaseOperations();
-        ;
         System.out.println("call ServerHandlerLogic constrastor");
     }
 
@@ -54,10 +53,6 @@ public class ServerHandlerLogic {
         String data = user.getUserName() + "," + user.getEmail() + "," + user.getScore() + "," + user.getGender();
         map.put(userIp, data);
         return data;
-    }
-
-    public int getusersCount(String email) {
-        return databaseOperations.getUsersCount();
     }
 
 }

@@ -1,14 +1,12 @@
 package tictactoe.server;
 
-import Database.DatabaseOperations;
-import java.net.URL;
+
+import Logic.ServerHandler;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.Set;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,11 +17,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
-import org.apache.derby.database.Database;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.apache.derby.jdbc.ClientDriver;
-import static tictactoe.server.Handler.clientsVector;
 
 public class ServerScreen extends AnchorPane {
 
@@ -126,7 +122,6 @@ public class ServerScreen extends AnchorPane {
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
         @Override
         public void handle(WindowEvent event) {
-            //serverHandler.stopServer();
             if(startStopButton.getText().equals("Start")){
                 System.exit(0);
             }
@@ -142,13 +137,12 @@ public class ServerScreen extends AnchorPane {
     private ObservableList<Data> getChartData() {
 
         ObservableList<Data> list = FXCollections.observableArrayList();
-        System.err.println(offline);
+        int onlineSize = ServerHandler.getVectorSize();
         if(offline!=null){
-            System.err.println("online: "+clientsVector.size());
-            System.err.println("offline: "+(offline-clientsVector.size()));
-            Set<Handler> set = new HashSet<Handler>(clientsVector);
-            list.addAll(new PieChart.Data("Online", set.size()),
-                new PieChart.Data("Offline", offline-clientsVector.size()));
+            System.err.println("online: "+onlineSize);
+            System.err.println("offline: "+(offline-onlineSize));
+            list.addAll(new PieChart.Data("Online", onlineSize),
+                new PieChart.Data("Offline", offline-onlineSize));
         }
         else{
             list.addAll(new PieChart.Data("Online", 0),

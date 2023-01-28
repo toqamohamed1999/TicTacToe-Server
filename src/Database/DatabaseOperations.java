@@ -30,7 +30,6 @@ public class DatabaseOperations {
             while (rs.next()) {
                 user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("email"), rs.getString("password"), rs.getString("gender"), rs.getInt("score"), rs.getString("recordspath"));
                 usersList.add(user);
-                System.out.println(user.toString());
             }
             stmt.close();
         } catch (SQLException ex) {
@@ -50,7 +49,6 @@ public class DatabaseOperations {
 
             if (rs.next()) {
                 user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("email"), rs.getString("password"), rs.getString("gender"), rs.getInt("score"), rs.getString("recordspath"));
-                System.out.println("heloooooooooooooo" + user.toString());
                 return true;
             }
             stmt.close();
@@ -72,7 +70,6 @@ public class DatabaseOperations {
 
     public int signUpDatabase(String[] signUpData) {
         int rs = -1;
-        //  System.out.println("User Exisist = " + checkUserExist(signUpData[1], signUpData[2]));
         try {
 
             pst = con.prepareStatement("INSERT INTO \"MYUSER\" (\"userName\", \"email\", \"password\", \"gender\",\"score\")VALUES(?,?,?,?,0)");
@@ -99,9 +96,7 @@ public class DatabaseOperations {
             PreparedStatement s = con.prepareStatement(queryString);
             s.setString(1, email);
             ResultSet rs = s.executeQuery();
-            System.out.println("emaillllllllllllllllllll " + email);
             if (rs.next()) {
-                System.out.println("enterrrrrrrrrrrrrrrrrrrrrrrrrr");
                 user = new User(rs.getInt("id"), rs.getString("username"), rs.getString("email"), rs.getString("password"), rs.getString("gender"), rs.getInt("score"), rs.getString("recordspath"));
             }
             stmt.close();
@@ -130,14 +125,12 @@ public class DatabaseOperations {
     public void updateScore(String email, int score) {
         try {
             pst = con.prepareStatement("UPDATE ROOT.MYUSER set \"score\"=? WHERE \"email\"=?");
-        
             pst.setInt(1, score);
             pst.setString(2, email);
             int rs = pst.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-
     }
 
 }
